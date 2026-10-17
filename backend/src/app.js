@@ -26,8 +26,36 @@ const app = express();
 // ────────────────────────────────────────────────
 // Core Middleware
 // ────────────────────────────────────────────────
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'http://127.0.0.1:5173',
+];
+if (process.env.FRONTEND_URL) {
+  process.env.FRONTEND_URL.split(',').forEach((url) => {
+    const trimmed = url.trim();
+    if (trimmed && !allowedOrigins.includes(trimmed)) allowedOrigins.push(trimmed);
+  });
+}
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+    try {
+      const hostname = new URL(origin).hostname;
+      if (
+        allowedOrigins.includes(origin) ||
+        allowedOrigins.includes('*') ||
+        process.env.NODE_ENV !== 'production' ||
+        hostname.endsWith('.vercel.app') ||
+        hostname.endsWith('.onrender.com') ||
+        hostname === 'localhost'
+      ) {
+        return callback(null, true);
+      }
+    } catch (_) {}
+    return callback(new Error(`CORS policy: origin ${origin} not allowed.`));
+  },
   credentials: true,
 }));
 
