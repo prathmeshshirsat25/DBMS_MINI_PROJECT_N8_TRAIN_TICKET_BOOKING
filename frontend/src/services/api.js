@@ -1,5 +1,7 @@
 // Centralized API client for all backend endpoints
-const RAW_BASE = import.meta.env.VITE_API_BASE_URL || '';
+const RAW_BASE =
+  import.meta.env.VITE_API_BASE_URL ||
+  'https://dbms-mini-project-train-ticket-booking.onrender.com';
 const API_BASE = RAW_BASE
   ? `${RAW_BASE.replace(/\/$/, '')}${RAW_BASE.endsWith('/api') ? '' : '/api'}`
   : '/api';
