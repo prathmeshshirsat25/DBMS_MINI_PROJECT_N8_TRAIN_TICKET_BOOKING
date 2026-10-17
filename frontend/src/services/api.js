@@ -1,6 +1,8 @@
 // Centralized API client for all backend endpoints
-
-const API_BASE = '/api';
+const RAW_BASE = import.meta.env.VITE_API_BASE_URL || '';
+const API_BASE = RAW_BASE
+  ? `${RAW_BASE.replace(/\/$/, '')}${RAW_BASE.endsWith('/api') ? '' : '/api'}`
+  : '/api';
 
 function getToken() {
   return localStorage.getItem('token');
